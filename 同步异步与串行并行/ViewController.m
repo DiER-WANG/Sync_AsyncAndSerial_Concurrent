@@ -27,15 +27,18 @@
 }
 
 - (void)method {
-    dispatch_queue_t serialQueue = dispatch_queue_create("xxx", DISPATCH_QUEUE_CONCURRENT);
+    dispatch_queue_t serialQueue = dispatch_queue_create("xxx", DISPATCH_QUEUE_SERIAL);
+    
+    // 当 串行队列 为 dispatch_get_main_queue() 时，使用 同步串行队列会造成死锁，当为自己创建的 串行队列时，不会造成死锁
+    
     NSLog(@"01");
-    dispatch_async(serialQueue, ^{
+    dispatch_sync(serialQueue, ^{
         for (NSUInteger i = 0; i < 10; i++) {
             NSLog(@"101：%@：%@", @(i), [NSThread currentThread]);
         }
     });
     NSLog(@"02");
-    dispatch_async(serialQueue, ^{
+    dispatch_sync(serialQueue, ^{
         for (NSUInteger i = 0; i < 10; i++) {
             NSLog(@"102：%@：%@", @(i), [NSThread currentThread]);
         }
